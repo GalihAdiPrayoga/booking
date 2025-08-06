@@ -13,4 +13,13 @@ class Airport extends Model
 
     protected $fillable = ['code','name','city','country'];
 
+     public function departures()
+    {
+        return $this->hasMany(Flight::class, 'origin_airport_id');
+    }
+
+    public function arrivals()
+    {
+        return $this->hasMany(Flight::class, 'destination_airport_id');
+    }
 }

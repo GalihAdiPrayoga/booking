@@ -13,8 +13,16 @@ return new class extends Migration
     {
         Schema::create('flights', function (Blueprint $table) {
             $table->id();
+            $table->string('flight_number')->unique();
+            $table->foreignId('origin_airport_id')->constrained('airports');
+            $table->foreignId('destination_airport_id')->constrained('airports');
+            $table->dateTime('departure_time');
+            $table->dateTime('arrival_time');
+            $table->decimal('price', 10, 2);
+            $table->integer('available_seats');
             $table->timestamps();
-        });
+});
+
     }
 
     /**

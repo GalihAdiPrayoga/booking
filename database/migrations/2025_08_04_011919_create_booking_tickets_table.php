@@ -11,10 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('booking_tickets', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+      Schema::create('booking_ticket', function (Blueprint $table) {
+         $table->id();
+         $table->foreignId('booking_id')->constrained('bookings')->onDelete('cascade');
+         $table->foreignId('ticket_id')->constrained('tickets')->onDelete('cascade');
+         $table->timestamps();
+     });
+
     }
 
     /**

@@ -11,10 +11,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tickets', function (Blueprint $table) {
-            $table->id();
-            $table->timestamps();
-        });
+       Schema::create('tickets', function (Blueprint $table) {
+           $table->id();
+           $table->foreignId('flight_id')->constrained('flights');
+           $table->foreignId('class_id')->constrained('flights_classes');
+           $table->decimal('price', 10, 2);
+           $table->integer('seat_number'); 
+           $table->timestamps();
+       });
+
     }
 
     /**

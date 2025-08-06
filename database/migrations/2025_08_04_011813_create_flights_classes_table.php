@@ -11,13 +11,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-       Schema::create('bookings', function (Blueprint $table) {
-           $table->id();
-           $table->foreignId('user_id')->constrained();
-           $table->date('booking_date');
-           $table->string('status')->default('pending');
-           $table->timestamps();
-       });
+        Schema::create('flights_classes', function (Blueprint $table) {
+            $table->id();
+            $table->string('name'); // Ekonomi, Bisnis, First Class
+            $table->text('description')->nullable();
+            $table->timestamps();
+        });
 
     }
 
@@ -26,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::dropIfExists('flights_classes');
     }
 };
