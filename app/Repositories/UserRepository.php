@@ -20,7 +20,7 @@ class UserRepository extends BaseRepository implements UserInterface
 {
     $user = $this->model->create($data);
 
-    $user->assignRole('user');
+    $user->assignRole('User');
 
     return $user;
 }
