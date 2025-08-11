@@ -2,64 +2,88 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\flight;
-use Illuminate\Http\Request;
+use App\Models\Flight;
+use Illuminate\Support\Facades\DB;
+use App\Helpers\ResponseHelper;
+use App\Services\FlightService;
+use App\Http\Requests\FlightRequest;
+use App\Repositories\FlightRepository;
+use App\Http\Resources\FlightResource;
 
 class FlightController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
+   private FlightService $flightService;
+   private  FlightRepository $flightRepository;
+
+  public function __construct(FlightService $flightService, FlightRepository $flightRepository)
+    {
+        $this->flightService = $flightService;
+        $this->flightRepository = $flightRepository;
+    }   
+
     public function index()
     {
-        //
+   
+        try {
+            return ResponseHelper::success(
+                FlightResource::collection($this->flightRepository->get()),
+                trans('alert.fetch_data_success')
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(message: $th->getMessage());
+        }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(FlightRequest $request)
     {
-        //
+        DB::beginTransaction();
+        try {
+            $payload = $this->flightService->mapStore($request->validated());
+            $flight = $this->flightRepository->store($payload);
+
+            DB::commit();
+            return ResponseHelper::success(new FlightResource($flight), 'Flight successfully added');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseHelper::error(message: 'Failed Added Flight '. $th->getMessage());
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    }
+    public function show($id)
     {
-        //
+          try {
+            return ResponseHelper::success(new FlightResource($this->flightRepository->show($id)), 'Detail penerbangan');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(message: $th->getMessage());
+        }   
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(flight $flight)
+    public function update(FlightRequest $request, flight $flight)
     {
-        //
+         DB::beginTransaction();
+        try {
+            $payload = $this->flightService->mapUpdate($request->validated());
+            $flight->update($payload);
+
+            DB::commit();
+            return ResponseHelper::success(new FlightResource($flight), 'Penerbangan berhasil diperbarui');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseHelper::error(message: 'Gagal memperbarui penerbangan => ' . $th->getMessage());
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(flight $flight)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, flight $flight)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(flight $flight)
     {
-        //
+           DB::beginTransaction();
+        try {
+            $flight->delete();
+            DB::commit();
+            return ResponseHelper::success(new FlightResource($flight), 'Penerbangan berhasil dihapus');
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseHelper::error(message: 'Gagal menghapus penerbangan => ' . $th->getMessage());
+        }
     }
 }
