@@ -16,6 +16,7 @@ class FlightResource extends JsonResource
 {
     return [
         'id' => $this->id,
+        'airline' => $this->airline,
         'flight_number' => $this->flight_number,
         'origin' => new AirportsResource($this->origin),
         'destination' => new AirportsResource($this->destination),

@@ -11,6 +11,7 @@ class Flight extends Model
     protected $table = "flights";
 
     protected $fillable = [
+        'airline',
         'flight_number', 
         'origin_airport_id', 
         'destination_airport_id',

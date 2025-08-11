@@ -13,12 +13,13 @@ return new class extends Migration
     {
         Schema::create('flights', function (Blueprint $table) {
             $table->id();
+            $table->string('airline');
             $table->string('flight_number')->unique();
             $table->foreignId('origin_airport_id')->constrained('airports')->onDelete('cascade');
             $table->foreignId('destination_airport_id')->constrained('airports')->onDelete('cascade');
             $table->dateTime('departure_time');
             $table->dateTime('arrival_time');
-            $table->integer('available_seats')->default(0); // default biar tidak error
+            $table->integer('available_seats')->default(0); 
             $table->timestamps();
 });
 
