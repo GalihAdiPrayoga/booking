@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\FlightsClasses; // Not: flightsclasses
+use App\Models\FlightsClasses; 
 use Illuminate\Support\Facades\DB;
 use App\Helpers\ResponseHelper;
 use App\Services\FlightsClassesService;
