@@ -64,7 +64,7 @@ class AirportsController extends Controller
         DB::beginTransaction();
         try {
             $payload = $this->airportsService->mapUpdate($request->validated(), $airport);
-            $airport->update($payload);
+            $this->airportsRepository->update($payload, ['id' => $airport->id]);
 
             DB::commit();
             return ResponseHelper::success(new AirportsResource($airport), 'Bandara berhasil diperbarui');

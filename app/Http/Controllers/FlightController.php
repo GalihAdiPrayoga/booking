@@ -64,7 +64,7 @@ class FlightController extends Controller
          DB::beginTransaction();
         try {
             $payload = $this->flightService->mapUpdate($request->validated());
-            $flight->update($payload);
+            $this->flightRepository->update($payload, $flight->id);
 
             DB::commit();
             return ResponseHelper::success(new FlightResource($flight), 'Penerbangan berhasil diperbarui');
