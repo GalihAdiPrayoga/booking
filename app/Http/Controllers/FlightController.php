@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\DB;
 use App\Helpers\ResponseHelper;
 use App\Services\FlightService;
 use App\Http\Requests\FlightRequest;
+use App\Http\Requests\UpdateFlightRequest;
 use App\Repositories\FlightRepository;
 use App\Http\Resources\FlightResource;
 
@@ -59,12 +60,12 @@ class FlightController extends Controller
         }   
     }
 
-    public function update(FlightRequest $request, flight $flight)
+    public function update(UpdateFlightRequest $request, flight $flight)
     {
          DB::beginTransaction();
         try {
             $payload = $this->flightService->mapUpdate($request->validated());
-            $this->flightRepository->update($payload, $flight->id);
+            $this->flightRepository->update($flight->id, $payload);
 
             DB::commit();
             return ResponseHelper::success(new FlightResource($flight), 'Penerbangan berhasil diperbarui');
