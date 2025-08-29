@@ -34,6 +34,8 @@ Route::middleware(['enable.cors', 'throttle:api'])->group(function () {
 
     // Protected routes
     Route::middleware(['auth:sanctum'])->group(function () {
+        Route::get('/profile', [UserController::class, 'profile']);
+        Route::put('/profile', [UserController::class, 'updateProfile']);
 
         // Admin only
         Route::middleware('role:Admin')->group(function () {
