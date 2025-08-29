@@ -8,6 +8,7 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Http\Resources\UserPaginateResource;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Repositories\UserRepository;
@@ -188,4 +189,30 @@ class UserController extends Controller
         }
     }
 
+    public function profile(): JsonResponse
+    {
+    try {
+        $user = Auth::user();
+        return ResponseHelper::success(new UserResource($user), trans('alert.get_current_user'));
+    } catch (\Throwable $th) {
+        return ResponseHelper::error(message: $th->getMessage());
     }
+    }
+
+    public function updateProfile(UpdateProfileRequest $request): JsonResponse
+    {
+    DB::beginTransaction();
+    try {
+        $user = Auth::user();
+        $payload = $this->userService->mapUpdateProfile($request, $user);
+        $user->update($payload);
+
+        DB::commit();
+        return ResponseHelper::success(new UserResource($user), trans('alert.update_success'));
+    } catch (\Throwable $th) {
+        DB::rollBack();
+        return ResponseHelper::error(message: trans('alert.update_failed') . " => " . $th->getMessage());
+    }
+}
+
+}

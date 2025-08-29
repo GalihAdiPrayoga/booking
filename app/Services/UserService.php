@@ -80,4 +80,21 @@ class UserService
             'role' => $user->roles->pluck('name')->first()
         ];
     }
+
+    public function mapUpdateProfile($request, User $user): array
+{
+    $data = $request->validated();
+
+    if ($request->password) {
+        $data["password"] = bcrypt($request->password);
+    }
+
+    if ($request->hasFile('photo')) {
+        if ($user?->photo) $this->remove($user->photo);
+        $data["photo"] = $this->upload("users", $request->file('photo'));
+    }
+
+    return $data;
+}
+
 }

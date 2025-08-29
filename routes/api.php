@@ -48,6 +48,7 @@ Route::middleware(['enable.cors', 'throttle:api'])->group(function () {
         });        
         Route::middleware('role:User')->group(function () {
             Route::apiResource('bookings', BookingsController::class);
+            Route::apiResource('users', UserController::class);
 
         });
     });
