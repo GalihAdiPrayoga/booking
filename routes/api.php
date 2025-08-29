@@ -4,6 +4,7 @@ use App\Http\Controllers\UserController;
 use App\Http\Controllers\AirportsController;
 use App\Http\Controllers\FlightController;
 use App\Http\Controllers\FlightsClassesController;
+use App\Http\Controllers\BookingsController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Http\Request;
 use Illuminate\Cache\RateLimiting\Limit;
@@ -44,8 +45,10 @@ Route::middleware(['enable.cors', 'throttle:api'])->group(function () {
             Route::apiResource('flights', FlightController::class);
             Route::apiResource('flightclasses', FlightsClassesController::class);
             
-        });        Route::middleware('role:User')->group(function () {
-            // Tambahkan route khusus user di sini jika ada
+        });        
+        Route::middleware('role:User')->group(function () {
+            Route::apiResource('bookings', BookingsController::class);
+
         });
     });
 });

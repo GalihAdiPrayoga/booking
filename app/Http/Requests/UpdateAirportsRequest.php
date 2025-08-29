@@ -21,7 +21,7 @@ class UpdateAirportsRequest extends FormRequest
      */
     public function rules(): array
     {
-       $airportId = $this->route('airport')->id ?? $this->route('airport');
+    $airportId = $this->route('airport')->id ?? $this->route('airport');
         return [
             'code' => 'required|string|max:5|unique:airports,code,' . $airportId,
             'name' => 'required|string|max:100',

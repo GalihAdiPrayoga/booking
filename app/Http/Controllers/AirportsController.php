@@ -25,7 +25,7 @@ class AirportsController extends Controller
     
     public function index()
     {
-       try {
+        try {
             return ResponseHelper::success(
                 AirportsResource::collection($this->airportsRepository->get()),
                 trans('alert.fetch_data_success')
@@ -52,9 +52,9 @@ class AirportsController extends Controller
     }
     public function show(string $id)
     {
-      try{
+    try{
         return ResponseHelper::success(new AirportsResource($this->airportsRepository->show($id)), trans('Detail bandara berhasil diambil'));          
-      } catch(\Throwable $th) {
+        } catch(\Throwable $th) {
         return ResponseHelper::error(message: $th->getMessage());
     }
     }

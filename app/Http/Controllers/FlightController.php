@@ -14,10 +14,10 @@ use App\Http\Resources\FlightResource;
 class FlightController extends Controller
 {
 
-   private FlightService $flightService;
-   private  FlightRepository $flightRepository;
+    private FlightService $flightService;
+    private  FlightRepository $flightRepository;
 
-  public function __construct(FlightService $flightService, FlightRepository $flightRepository)
+    public function __construct(FlightService $flightService, FlightRepository $flightRepository)
     {
         $this->flightService = $flightService;
         $this->flightRepository = $flightRepository;
@@ -25,7 +25,6 @@ class FlightController extends Controller
 
     public function index()
     {
-   
         try {
             return ResponseHelper::success(
                 FlightResource::collection($this->flightRepository->get()),
@@ -53,7 +52,7 @@ class FlightController extends Controller
     }
     public function show($id)
     {
-          try {
+        try {
             return ResponseHelper::success(new FlightResource($this->flightRepository->show($id)), 'Detail penerbangan');
         } catch (\Throwable $th) {
             return ResponseHelper::error(message: $th->getMessage());
@@ -62,7 +61,7 @@ class FlightController extends Controller
 
     public function update(UpdateFlightRequest $request, flight $flight)
     {
-         DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $payload = $this->flightService->mapUpdate($request->validated());
             $this->flightRepository->update($flight->id, $payload);
@@ -77,7 +76,7 @@ class FlightController extends Controller
 
     public function destroy(flight $flight)
     {
-           DB::beginTransaction();
+        DB::beginTransaction();
         try {
             $flight->delete();
             DB::commit();

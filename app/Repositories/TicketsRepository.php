@@ -12,5 +12,4 @@ class TicketsRepository extends BaseRepository implements TicketsInterface
         $this->model = $tickets;
     }
 
-   
 }

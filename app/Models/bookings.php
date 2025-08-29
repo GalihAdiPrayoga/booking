@@ -9,7 +9,7 @@ use App\Models\payments;
 class bookings extends Model
 {
     protected $table = "bookings";
-     protected $fillable = ['user_id', 'booking_date', 'status'];
+    protected $fillable = ['user_id', 'booking_date', 'status'];
 
     public function user()
     {
@@ -18,7 +18,7 @@ class bookings extends Model
 
     public function tickets()
     {
-        return $this->belongsToMany(tickets::class, 'booking_ticket');
+        return $this->belongsToMany(ticket::class, 'booking_ticket');
     }
 
     public function payment()

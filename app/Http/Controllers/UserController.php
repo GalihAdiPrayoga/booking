@@ -127,7 +127,7 @@ class UserController extends Controller
         }
     }
 
-     /**
+    /**
      * Get list user with paginate
      *
      * @param Request $request
@@ -148,7 +148,7 @@ class UserController extends Controller
         }
     }
 
-     /**
+    /**
      * Store a newly created resource in storage.
      */
     public function login(LoginRequest $request)
@@ -172,21 +172,20 @@ class UserController extends Controller
 
     }
 
-   
-   public function restore($id): JsonResponse
-   {
-       DB::beginTransaction();
-       try {
-           $user = User::withTrashed()->findOrFail($id);
-   
-           $user->restore();
-   
-           DB::commit();
-           return ResponseHelper::success( new UserResource($user), message: trans('alert.user_restore_success'));
-       } catch (\Throwable $th) {
-           DB::rollBack();
-           return ResponseHelper::error(message: trans('alert.user_restore_failed') . " => " . $th->getMessage());
-       }
-   }
-   
-   }
+    public function restore($id): JsonResponse
+    {
+        DB::beginTransaction();
+        try {
+            $user = User::withTrashed()->findOrFail($id);
+
+            $user->restore();
+
+            DB::commit();
+            return ResponseHelper::success( new UserResource($user), message: trans('alert.user_restore_success'));
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseHelper::error(message: trans('alert.user_restore_failed') . " => " . $th->getMessage());
+        }
+    }
+
+    }

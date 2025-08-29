@@ -26,7 +26,7 @@ class FlightsClassesController extends Controller
         try{
             return ResponseHelper::success(
                 FlightsClassesResource::collection($this->flightsClassesRepository->get()),
-                 trans('List kelas penerbangan berhasil diambil')
+                trans('List kelas penerbangan berhasil diambil')
             );
         } catch (\Throwable $th) {
             return ResponseHelper::error(message: $th->getMessage());
