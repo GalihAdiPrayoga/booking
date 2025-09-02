@@ -20,9 +20,9 @@ return new class extends Migration
             $table->dateTime('departure_time');
             $table->dateTime('arrival_time');
             $table->integer('available_seats')->default(0); 
+            $table->string('photo')->nullable(); // kolom untuk simpan path/URL foto
             $table->timestamps();
-});
-
+        });
     }
 
     /**
@@ -31,6 +31,5 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('flights');
-        
     }
 };

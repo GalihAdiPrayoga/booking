@@ -25,10 +25,7 @@ class BookingsController extends Controller
     public function index()
     {
         try {
-            return ResponseHelper::success(
-                BookingsResource::collection($this->bookingsRepository->get()),
-                trans('alert.fetch_data_success')
-            );
+            return ResponseHelper::success(BookingsResource::collection($this->bookingsRepository->get()), trans('alert.fetch_data_success'));
         } catch (\Throwable $th) {
             return ResponseHelper::error(message: $th->getMessage());
         }
@@ -38,11 +35,10 @@ class BookingsController extends Controller
     {
         DB::beginTransaction();
         try {
-            $payload = $this->bookingsService->mapStore($request->validated());
-            $bookings = $this->bookingsRepository->store($payload);
+            $booking = $this->bookingsService->createWithPassengers(auth()->id, $request->booking_date, $request->passengers);
 
             DB::commit();
-            return ResponseHelper::success(new BookingsResource($bookings), trans('alert.add_success'));
+            return ResponseHelper::success(new BookingsResource($booking->load('passengers')), trans('alert.add_success'));
         } catch (\Throwable $th) {
             DB::rollBack();
             return ResponseHelper::error(message: trans('alert.add_failed') . ' => ' . $th->getMessage());
@@ -52,21 +48,6 @@ class BookingsController extends Controller
     public function show(Bookings $bookings)
     {
         return ResponseHelper::success(new BookingsResource($bookings));
-    }
-
-    public function update(UpdateBookingsRequest $request, Bookings $bookings)
-    {
-        DB::beginTransaction();
-        try {
-            $payload = $this->bookingsService->mapUpdate($request->validated());
-            $this->bookingsRepository->update($bookings, $payload);
-
-            DB::commit();
-            return ResponseHelper::success(new BookingsResource($bookings), trans('alert.update_success'));
-        } catch (\Throwable $th) {
-            DB::rollBack();
-            return ResponseHelper::error(message: trans('alert.update_failed') . ' => ' . $th->getMessage());
-        }
     }
 
     public function destroy(Bookings $bookings)

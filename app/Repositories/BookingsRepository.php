@@ -8,25 +8,26 @@ class BookingsRepository
 {
     public function get()
     {
-        return Bookings::all();
+        return Bookings::with('passengers')->get();
     }
 
-    public function store(array $data): Bookings
+    public function findById($id)
     {
-        return Bookings::create($data);
+        return Bookings::with('passengers')->findOrFail($id);
     }
 
-    public function find(int $id): ?Bookings
+    public function store(array $data)
     {
-        return Bookings::find($id);
+        return Bookings::store($data);
     }
 
-    public function update(Bookings $bookings, array $data): bool
+    public function update(Bookings $bookings, array $data)
     {
-        return $bookings->update($data);
+        $bookings->update($data);
+        return $bookings;
     }
 
-    public function delete(Bookings $bookings): bool
+    public function delete(Bookings $bookings)
     {
         return $bookings->delete();
     }

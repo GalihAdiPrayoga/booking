@@ -11,7 +11,6 @@ use App\Traits\UploadTrait;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
-
 class UserService
 {
     use UploadTrait;
@@ -20,12 +19,12 @@ class UserService
     {
         $data = $request->validated();
 
-        if($request->password) {
-            $data["password"] = bcrypt($request->password);
+        if ($request->password) {
+            $data['password'] = bcrypt($request->password);
         }
 
-        if($request->hasFile('photo')) {
-            $data["photo"] = $this->upload("users", $request->file('photo'));
+        if ($request->hasFile('photo')) {
+            $data['photo'] = $this->upload('users', $request->file('photo'));
         }
 
         return $data;
@@ -35,13 +34,15 @@ class UserService
     {
         $data = $request->validated();
 
-        if($request->password) {
-            $data["password"] = bcrypt($request->password);
+        if ($request->password) {
+            $data['password'] = bcrypt($request->password);
         }
 
-        if($request->hasFile('photo')) {
-            if($user?->photo) $this->remove($user->photo);
-            $data["photo"] = $this->upload("users", $request->file('photo'));
+        if ($request->hasFile('photo')) {
+            if ($user?->photo) {
+                $this->remove($user->photo);
+            }
+            $data['photo'] = $this->upload('users', $request->file('photo'));
         }
 
         return $data;
@@ -49,7 +50,9 @@ class UserService
 
     public function removeImage(User $user): bool
     {
-        if($user?->photo) $this->remove($user->photo);
+        if ($user?->photo) {
+            $this->remove($user->photo);
+        }
 
         return true;
     }
@@ -67,34 +70,16 @@ class UserService
         $remember = $request->remember_me ?? false;
         unset($validated['remember_me']); // fix key name
 
-
         if (!Auth::attempt($validated, $remember)) {
             return ResponseHelper::error(null, trans('auth.failed'), Response::HTTP_UNAUTHORIZED);
         }
 
         $user = Auth::user();
 
-        return (object)[
+        return (object) [
             'user' => $user,
             'token' => $user->createToken('auth_token')->plainTextToken,
-            'role' => $user->roles->pluck('name')->first()
+            'role' => $user->roles->pluck('name')->first(),
         ];
     }
-
-    public function mapUpdateProfile($request, User $user): array
-{
-    $data = $request->validated();
-
-    if ($request->password) {
-        $data["password"] = bcrypt($request->password);
-    }
-
-    if ($request->hasFile('photo')) {
-        if ($user?->photo) $this->remove($user->photo);
-        $data["photo"] = $this->upload("users", $request->file('photo'));
-    }
-
-    return $data;
-}
-
 }

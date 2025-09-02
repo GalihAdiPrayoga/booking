@@ -22,7 +22,6 @@ class BookingsRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => 'required|exists:users,id',
             'booking_date' => 'required|date',
             'status' => 'required|string|in:pending,confirmed,cancelled',
         ];

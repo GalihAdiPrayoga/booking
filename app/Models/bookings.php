@@ -8,7 +8,7 @@ use App\Models\tickets;
 use App\Models\payments;
 class bookings extends Model
 {
-    protected $table = "bookings";
+    protected $table = 'bookings';
     protected $fillable = ['user_id', 'booking_date', 'status'];
 
     public function user()
@@ -26,4 +26,8 @@ class bookings extends Model
         return $this->hasOne(payments::class);
     }
 
+    public function passengers()
+    {
+        return $this->hasMany(BookingPassenger::class);
+    }
 }
