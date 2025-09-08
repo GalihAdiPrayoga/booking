@@ -10,6 +10,7 @@ use App\Http\Resources\BookingsResource;
 use App\Repositories\BookingsRepository;
 use App\Services\BookingsService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class BookingsController extends Controller
 {
@@ -25,42 +26,111 @@ class BookingsController extends Controller
     public function index()
     {
         try {
-            return ResponseHelper::success(BookingsResource::collection($this->bookingsRepository->get()), trans('alert.fetch_data_success'));
+            $bookings = $this->bookingsRepository->get();
+            return ResponseHelper::success(
+                BookingsResource::collection($bookings), 
+                trans('alert.fetch_data_success')
+            );
         } catch (\Throwable $th) {
             return ResponseHelper::error(message: $th->getMessage());
         }
     }
 
     public function store(BookingsRequest $request)
-    {
-        DB::beginTransaction();
-        try {
-            $booking = $this->bookingsService->createWithPassengers(auth()->id, $request->booking_date, $request->passengers);
+{
+    if (!Auth::check()) {
+        return ResponseHelper::error(
+            message: trans('alert.unauthenticated'),
+            code: 401
+        );
+    }
 
-            DB::commit();
-            return ResponseHelper::success(new BookingsResource($booking->load('passengers')), trans('alert.add_success'));
+    DB::beginTransaction();
+    try {
+        $booking = $this->bookingsService->createWithPassengers(
+            Auth::id(),
+            $request->booking_date, 
+            $request->passengers // Tidak perlu kirim ticket_id terpisah
+        );
+
+        DB::commit();
+        return ResponseHelper::success(
+            new BookingsResource($booking->load('passengers')), 
+            trans('alert.add_success')
+        );
+    } catch (\Throwable $th) {
+        DB::rollBack();
+        return ResponseHelper::error(
+            message: trans('alert.add_failed') . ' => ' . $th->getMessage()
+        );
+    }
+}
+    public function show(Bookings $booking)
+    {
+        try {
+            if (Auth::check() && $booking->user_id !== Auth::id()) {
+                return ResponseHelper::error(
+                    message: trans('alert.unauthorized'),
+                    code: 403
+                );
+            }
+            
+            return ResponseHelper::success(
+                new BookingsResource($booking->load('passengers'))
+            );
         } catch (\Throwable $th) {
-            DB::rollBack();
-            return ResponseHelper::error(message: trans('alert.add_failed') . ' => ' . $th->getMessage());
+            return ResponseHelper::error(message: $th->getMessage());
         }
     }
 
-    public function show(Bookings $bookings)
+    public function update(UpdateBookingsRequest $request, Bookings $booking)
     {
-        return ResponseHelper::success(new BookingsResource($bookings));
-    }
+        // Memastikan user hanya bisa mengupdate booking miliknya sendiri
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            return ResponseHelper::error(
+                message: trans('alert.unauthorized'),
+                code: 403
+            );
+        }
 
-    public function destroy(Bookings $bookings)
-    {
         DB::beginTransaction();
         try {
-            $this->bookingsRepository->delete($bookings);
+            $updatedBooking = $this->bookingsRepository->update($booking, $request->validated());
+            
+            DB::commit();
+            return ResponseHelper::success(
+                new BookingsResource($updatedBooking->load('passengers')), 
+                trans('alert.update_success')
+            );
+        } catch (\Throwable $th) {
+            DB::rollBack();
+            return ResponseHelper::error(
+                message: trans('alert.update_failed') . ' => ' . $th->getMessage()
+            );
+        }
+    }
+
+    public function destroy(Bookings $booking)
+    {
+        // Memastikan user hanya bisa menghapus booking miliknya sendiri
+        if (Auth::check() && $booking->user_id !== Auth::id()) {
+            return ResponseHelper::error(
+                message: trans('alert.unauthorized'),
+                code: 403
+            );
+        }
+
+        DB::beginTransaction();
+        try {
+            $this->bookingsRepository->delete($booking);
 
             DB::commit();
             return ResponseHelper::success(message: trans('alert.delete_success'));
         } catch (\Throwable $th) {
             DB::rollBack();
-            return ResponseHelper::error(message: trans('alert.delete_failed') . ' => ' . $th->getMessage());
+            return ResponseHelper::error(
+                message: trans('alert.delete_failed') . ' => ' . $th->getMessage()
+            );
         }
     }
 }

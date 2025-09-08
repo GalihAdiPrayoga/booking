@@ -6,25 +6,29 @@ use Illuminate\Foundation\Http\FormRequest;
 
 class BookingsRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
-    public function authorize(): bool
+    public function authorize()
     {
         return true;
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
+    public function rules()
     {
         return [
             'booking_date' => 'required|date',
-            'status' => 'required|string|in:pending,confirmed,cancelled',
+            'passengers' => 'required|array',
+            'passengers.*.name' => 'required|string',
+            'passengers.*.identity_number' => 'required|string',
+            'passengers.*.ticket_id' => 'required|integer|exists:tickets,id',
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'ticket_id.required' => 'Ticket ID harus diisi',
+            'ticket_id.integer' => 'Ticket ID harus berupa angka',
+            'ticket_id.exists' => 'Ticket tidak ditemukan',
+            // Pesan error lainnya...
         ];
     }
 }
-

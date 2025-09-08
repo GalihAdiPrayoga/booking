@@ -3,31 +3,20 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\User;
-use App\Models\tickets;
-use App\Models\payments;
-class bookings extends Model
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
+class Bookings extends Model
 {
     protected $table = 'bookings';
-    protected $fillable = ['user_id', 'booking_date', 'status'];
-
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
-
-    public function tickets()
-    {
-        return $this->belongsToMany(ticket::class, 'booking_ticket');
-    }
-
-    public function payment()
-    {
-        return $this->hasOne(payments::class);
-    }
+    
+    protected $fillable = [
+        'user_id', 
+        'booking_date', 
+        'status'
+    ];
 
     public function passengers()
     {
-        return $this->hasMany(BookingPassenger::class);
+        return $this->hasMany(BookingPassengers::class, 'booking_id', 'id');
     }
 }

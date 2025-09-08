@@ -27,7 +27,7 @@ class FlightsClassesRequest extends FormRequest
             'description' => ['nullable', 'string', 'max:255'],
         ];
     }
-      public function messages(): array
+    public function messages(): array
     {
         return [
             'name.required' => 'Nama kelas wajib diisi.',

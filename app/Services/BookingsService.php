@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Repositories\BookingsRepository;
 use App\Repositories\BookingPassengersRepository;
-use App\Models\bookings;
+use App\Models\Bookings;
 
 class BookingsService
 {
@@ -19,22 +19,22 @@ class BookingsService
         $this->bookingPassengersRepository = $bookingPassengersRepository;
     }
 
-    public function createWithPassengers(int $userId, string $bookingDate, array $passengers): bookings
+    public function createWithPassengers(int $userId, string $bookingDate, array $passengers): Bookings
     {
-        // simpan booking utama
+        // Simpan booking utama
         $booking = $this->bookingsRepository->store([
             'user_id' => $userId,
             'booking_date' => $bookingDate,
             'status' => 'pending',
         ]);
 
-        // simpan banyak penumpang
-        foreach ($passengers as $p) {
+        // Simpan banyak penumpang
+        foreach ($passengers as $passenger) {
             $this->bookingPassengersRepository->store([
                 'booking_id' => $booking->id,
-                'name' => $p['name'],
-                'identity_number' => $p['identity_number'],
-                'seat_number' => $p['seat_number'],
+                'ticket_id' => $passenger['ticket_id'],
+                'name' => $passenger['name'],
+                'identity_number' => $passenger['identity_number'],
             ]);
         }
 

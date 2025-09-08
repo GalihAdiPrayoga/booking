@@ -2,32 +2,32 @@
 
 namespace App\Repositories;
 
-use App\Models\Bookings;
+use App\Models\bookings;
 
 class BookingsRepository
 {
     public function get()
     {
-        return Bookings::with('passengers')->get();
+        return bookings::with('passengers')->get();
     }
 
     public function findById($id)
     {
-        return Bookings::with('passengers')->findOrFail($id);
+        return bookings::with('passengers')->findOrFail($id);
     }
 
     public function store(array $data)
     {
-        return Bookings::store($data);
+        return bookings::create($data);
     }
 
-    public function update(Bookings $bookings, array $data)
+    public function update(bookings $bookings, array $data)
     {
         $bookings->update($data);
         return $bookings;
     }
 
-    public function delete(Bookings $bookings)
+    public function delete(bookings $bookings)
     {
         return $bookings->delete();
     }

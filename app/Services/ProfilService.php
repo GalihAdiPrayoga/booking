@@ -2,30 +2,45 @@
 
 namespace App\Services;
 
-use App\Helpers\ResponseHelper;
-use App\Http\Requests\LoginRequest;
-use App\Http\Requests\UserRequest;
-use App\Http\Requests\UpdateUserRequest;
-use App\Models\User;
 use App\Traits\UploadTrait;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
-class UserService
+class ProfilService
 {
     use UploadTrait;
 
-    public function mapUpdateProfile($request, User $user): array
+    /**
+     * Map update profile data - hanya name dan photo
+     */
+    public function mapUpdate(array $validatedData): array
     {
-        $data = $request->validated();
+        $data = [];
 
-        if ($request->hasFile('photo')) {
-            if ($user?->photo) {
-                $this->remove($user->photo);
+        // Hanya proses name jika ada
+        if (isset($validatedData['name'])) {
+            $data['name'] = $validatedData['name'];
+        }
+
+        // Hanya proses photo jika ada file
+        if (isset($validatedData['photo'])) {
+            try {
+                $data['photo'] = $this->upload('users', $validatedData['photo']);
+            } catch (\Exception $e) {
+                Log::error('Photo upload failed: ' . $e->getMessage());
+                throw $e;
             }
-            $data['photo'] = $this->upload('users', $request->file('photo'));
         }
 
         return $data;
+    }
+
+    /**
+     * Remove user photo
+     */
+    public function removePhoto(int $userId): void
+    {
+        // Logic untuk remove photo akan dihandle oleh repository
+        // Service hanya memastikan payload untuk remove photo
     }
 }

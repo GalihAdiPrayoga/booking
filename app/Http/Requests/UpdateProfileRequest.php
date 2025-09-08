@@ -3,27 +3,32 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class UpdateProfileRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
-        return true;
+        return Auth::check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
     public function rules(): array
     {
         return [
-            'name' => 'sometimes|string|max:255',
-            'photo' => 'nullable|image|mimes:jpg,jpeg,png|max:2048', 
+            'name' => 'sometimes|required|string|max:255',
+            'photo' => 'sometimes|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'name.required' => 'Nama harus diisi.',
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama tidak boleh lebih dari 255 karakter.',
+            'photo.image' => 'File harus berupa gambar.',
+            'photo.mimes' => 'Gambar harus berformat jpeg, png, jpg, atau gif.',
+            'photo.max' => 'Ukuran gambar tidak boleh lebih dari 2MB.',
         ];
     }
 }

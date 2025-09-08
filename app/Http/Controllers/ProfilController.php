@@ -1,45 +1,100 @@
-    <?php
+<?php
 
-    namespace App\Http\Controllers;
+namespace App\Http\Controllers;
 
-    use Illuminate\Http\Request;
-    use App\Helpers\PaginateHelper;
-    use App\Helpers\ResponseHelper;
-    use App\Http\Requests\LoginRequest;
-    use App\Http\Requests\UserRequest;
-    use App\Http\Requests\UpdateUserRequest;
-    use App\Http\Resources\UserPaginateResource;
-    use App\Http\Requests\UpdateProfileRequest;
-    use App\Http\Resources\UserResource;
-    use App\Models\User;
-    use App\Repositories\UserRepository;
-    use App\Services\ProfilService;
-    use Illuminate\Http\JsonResponse;
-    use Illuminate\Support\Facades\Auth;
-    use Illuminate\Support\Facades\DB;
+use App\Helpers\ResponseHelper;
+use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Resources\UserResource;
+use App\Services\ProfilService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 
-    class ProfilController extends Controller
+class ProfilController extends Controller
+{
+    private ProfilService $profilService;
+
+    public function __construct(ProfilService $profilService)
     {
-        protected $profilService;
+        $this->profilService = $profilService;
+    }
 
-        public function __construct(ProfilService $profilService)
-        {
-            $this->profilService = $profilService;
-        }
-
-        public function updateProfile(UpdateProfileRequest $request): JsonResponse
-        {
-            DB::beginTransaction();
-            try {
-                $user = Auth::user();
-                $payload = $this->profilService->mapUpdateProfile($request, $user);
-                $user->update($payload);
-
-                DB::commit();
-                return ResponseHelper::success(new UserResource($user), trans('alert.update_success'));
-            } catch (\Throwable $th) {
-                DB::rollBack();
-                return ResponseHelper::error(message: trans('alert.update_failed') . ' => ' . $th->getMessage());
+    /**
+     * Get user profile
+     */
+    public function show(): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            
+            if (!$user) {
+                return ResponseHelper::error(
+                    message: trans('auth.unauthenticated'),
+                    code: 401
+                );
             }
+
+            return ResponseHelper::success(
+                new UserResource($user),
+                trans('alert.fetch_data_success')
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(message: $th->getMessage());
         }
     }
+
+    /**
+     * Update user profile (only name and photo)
+     */
+    public function update(UpdateProfileRequest $request): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            
+            if (!$user) {
+                return ResponseHelper::error(
+                    message: trans('auth.unauthenticated'),
+                    code: 401
+                );
+            }
+
+            $updatedUser = $this->profilService->updateProfile($user, $request->validated());
+
+            return ResponseHelper::success(
+                new UserResource($updatedUser),
+                trans('alert.update_success')
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(
+                message: trans('alert.update_failed')
+            );
+        }
+    }
+
+    /**
+     * Remove user photo
+     */
+    public function removePhoto(): JsonResponse
+    {
+        try {
+            $user = Auth::user();
+            
+            if (!$user) {
+                return ResponseHelper::error(
+                    message: trans('auth.unauthenticated'),
+                    code: 401
+                );
+            }
+
+            $updatedUser = $this->profilService->removePhoto($user);
+
+            return ResponseHelper::success(
+                new UserResource($updatedUser),
+                trans('alert.photo_removed')
+            );
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(
+                message: trans('alert.photo_remove_failed')
+            );
+        }
+    }
+}
