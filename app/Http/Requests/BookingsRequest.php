@@ -28,7 +28,6 @@ class BookingsRequest extends FormRequest
             'ticket_id.required' => 'Ticket ID harus diisi',
             'ticket_id.integer' => 'Ticket ID harus berupa angka',
             'ticket_id.exists' => 'Ticket tidak ditemukan',
-            // Pesan error lainnya...
         ];
     }
 }

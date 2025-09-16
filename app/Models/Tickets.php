@@ -7,8 +7,10 @@ use App\Models\Bookings;
 use App\Models\Flight;
 use App\Models\User;
 
-class Ticket extends Model
+class Tickets extends Model
 {
+    protected $table = 'tickets';
+
     protected $fillable = [
         'flight_id',
         'class_id',

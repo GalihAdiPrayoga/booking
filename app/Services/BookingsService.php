@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Repositories\BookingsRepository;
 use App\Repositories\BookingPassengersRepository;
 use App\Models\Bookings;
+use App\Models\BookingPassengers;
 
 class BookingsService
 {
@@ -40,4 +41,33 @@ class BookingsService
 
         return $booking;
     }
+
+        /**
+     * Cek apakah tiket tersedia
+     */
+    public function isTicketAvailable(int $ticketId, string $date): bool
+    {
+        return !BookingPassengers::where('ticket_id', $ticketId)
+            ->whereHas('booking', fn($q) => $q->whereDate('booking_date', $date))
+            ->exists();
+    }
+
+    /**
+     * Ambil status beberapa tiket pada tanggal tertentu
+     */
+    public function getTicketsStatus(array $ticketIds, string $date): array
+    {
+        $result = [];
+
+        foreach ($ticketIds as $ticketId) {
+            $result[] = [
+                'ticket_id' => $ticketId,
+                'date'      => $date,
+                'status'    => $this->isTicketAvailable($ticketId, $date) ? 'available' : 'unavailable',
+            ];
+        }
+
+        return $result;
+    }
+
 }

@@ -11,6 +11,8 @@ use App\Repositories\BookingsRepository;
 use App\Services\BookingsService;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Request;
+
 
 class BookingsController extends Controller
 {
@@ -131,6 +133,55 @@ class BookingsController extends Controller
             return ResponseHelper::error(
                 message: trans('alert.delete_failed') . ' => ' . $th->getMessage()
             );
+        }
+    }
+
+        /**
+     * Cek ketersediaan tiket di tanggal tertentu
+     */
+    public function checkAvailability(Request $request)
+    {
+        $request->validate([
+            'date'      => 'required|date',
+            'ticket_id' => 'required|integer|exists:tickets,id',
+        ]);
+
+        try {
+            $isAvailable = $this->bookingsService->isTicketAvailable(
+                $request->ticket_id,
+                $request->date
+            );
+
+            return ResponseHelper::success([
+                'ticket_id' => $request->ticket_id,
+                'date'      => $request->date,
+                'available' => $isAvailable,
+            ]);
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(message: $th->getMessage());
+        }
+    }
+
+    /**
+     * Ambil status semua tiket untuk tanggal tertentu
+     */
+    public function ticketsStatus(Request $request)
+    {
+        $request->validate([
+            'date'       => 'required|date',
+            'ticket_ids' => 'required|array',
+            'ticket_ids.*' => 'integer|exists:tickets,id',
+        ]);
+
+        try {
+            $status = $this->bookingsService->getTicketsStatus(
+                $request->ticket_ids,
+                $request->date
+            );
+
+            return ResponseHelper::success($status);
+        } catch (\Throwable $th) {
+            return ResponseHelper::error(message: $th->getMessage());
         }
     }
 }

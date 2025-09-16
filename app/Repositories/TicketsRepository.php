@@ -2,14 +2,33 @@
 
 namespace App\Repositories;
 
-use App\Models\Ticket;
-use App\Interfaces\TicketsInterface;
+use App\Models\Tickets;
 
-class TicketsRepository extends BaseRepository implements TicketsInterface
+class TicketsRepository
 {
-    public function __construct(Ticket $tickets)
+    public function create(array $data): Tickets
     {
-        $this->model = $tickets;
+        return Tickets::create($data);
     }
 
+    public function all()
+    {
+        return Tickets::all();
+    }
+
+    public function find($id): ?Tickets
+    {
+        return Tickets::find($id);
+    }
+
+    public function update(Tickets $tickets, array $data): Tickets
+    {
+        $tickets->update($data);
+        return $tickets;
+    }
+
+    public function delete(Tickets $tickets): bool
+    {
+        return $tickets->delete();
+    }
 }

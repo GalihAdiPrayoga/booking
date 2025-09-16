@@ -68,7 +68,7 @@ class UserService
         $validated = $request->validated();
 
         $remember = $request->remember_me ?? false;
-        unset($validated['remember_me']); // fix key name
+        unset($validated['remember_me']);
 
         if (!Auth::attempt($validated, $remember)) {
             return ResponseHelper::error(null, trans('auth.failed'), Response::HTTP_UNAUTHORIZED);

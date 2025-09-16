@@ -6,14 +6,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Airport extends Model
-
 {
-     use SoftDeletes;
-    protected $table = "Airports";
+    use SoftDeletes;
+    protected $table = 'Airports';
 
-    protected $fillable = ['code','name','city','country'];
+    protected $fillable = ['code', 'name', 'city', 'country'];
 
-     public function departures()
+    public function departures()
     {
         return $this->hasMany(Flight::class, 'origin_airport_id');
     }

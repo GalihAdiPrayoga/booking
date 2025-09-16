@@ -10,12 +10,11 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create('bookings', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained();
-            $table->date('booking_date');
-            $table->string('status')->default('pending');
-            $table->timestamps();
+        Schema::table('tickets', function (Blueprint $table) {
+            $table
+                ->enum('status', ['available', 'booked'])
+                ->default('available')
+                ->after('seat_number');
         });
     }
 
@@ -24,6 +23,8 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists('bookings');
+        Schema::table('tickets', function (Blueprint $table) {
+            $table->dropColumn('status');
+        });
     }
 };

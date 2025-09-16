@@ -8,6 +8,7 @@
     "require": {
         "php": "^8.2",
         "barryvdh/laravel-dompdf": "^3.1",
+        "doctrine/dbal": "^4.3",
         "laravel/framework": "^11.31",
         "laravel/sanctum": "^4.1",
         "laravel/tinker": "^2.9",
@@ -15,6 +16,7 @@
         "spatie/laravel-permission": "^6.17"
     },
     "require-dev": {
+        "barryvdh/laravel-ide-helper": "^3.6",
         "fakerphp/faker": "^1.23",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.13",
@@ -26,7 +28,7 @@
     "autoload": {
         "psr-4": {
             "App\\": "app/",
-             "App\\Helpers\\": "app/Helpers/",
+            "App\\Helpers\\": "app/Helpers/",
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/"
         }

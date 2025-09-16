@@ -2,23 +2,23 @@
 
 namespace App\Repositories;
 
-use App\Models\BookingPassengers; // UBAH KE PLURAL
+use App\Models\BookingPassengers; 
 
 class BookingPassengersRepository
 {
     protected $model;
 
-    public function __construct(BookingPassengers $bookingPassengers) // UBAH KE PLURAL
+    public function __construct(BookingPassengers $bookingPassengers) 
     {
         $this->model = $bookingPassengers;
     }
 
     public function store(array $data): BookingPassengers
     {
-        return BookingPassengers::create($data); // UBAH KE PLURAL
+        return BookingPassengers::create($data); 
     }
 
-    public function delete(BookingPassengers $passenger): bool // UBAH PARAMETER TYPE
+    public function delete(BookingPassengers $passenger): bool 
     {
         return $passenger->delete();
     }

@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\bookings;
+use App\Models\Bookings;
 
 class BookingsRepository
 {

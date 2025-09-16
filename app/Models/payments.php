@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use app\Models\bookings;
+use app\Models\Bookings;
 class payments extends Model
 {
     protected $fillable = ['booking_id', 'amount', 'payment_method', 'status', 'paid_at'];

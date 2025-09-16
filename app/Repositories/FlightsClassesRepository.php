@@ -2,7 +2,7 @@
 
 namespace App\Repositories;
 
-use App\Models\flightsclasses;
+use App\Models\Flightsclasses;
 use App\Interfaces\FlightsClassesInterface;
 
 class FlightsClassesRepository extends BaseRepository implements FlightsClassesInterface

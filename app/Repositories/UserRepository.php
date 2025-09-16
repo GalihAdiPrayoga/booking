@@ -16,14 +16,14 @@ class UserRepository extends BaseRepository implements UserInterface
         $this->model = $user;
     }
 
-  public function store(array $data): User
-{
-    $user = $this->model->create($data);
+    public function store(array $data): User
+    {
+        $user = $this->model->create($data);
 
-    $user->assignRole('User');
+        $user->assignRole('User');
 
-    return $user;
-}
+        return $user;
+    }
 
     /**
      * Handle paginate data event from models.
